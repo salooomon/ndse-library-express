@@ -3,7 +3,18 @@ const router = express.Router();
 
 const {v4: uuid} = require('uuid');
 const store = {
-  books : []
+  books : [
+    {
+      id: "1",
+      title: "Мифы Ктулху",
+      description: "string",
+      authors: "Говард Филлипс Лавкрафт",
+      favorite: true,
+      fileCover: "string",
+      fileName: "CthulhuMythos",
+      fileBook: "fileBook/CthulhuMythos"
+    }
+  ]
 }
 
 class Book {

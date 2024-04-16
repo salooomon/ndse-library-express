@@ -6,15 +6,14 @@ router.get('/api/books/:id/download',
 	fileMulter.single('book-download'),
 	(req, res) => {
 		if(req.file) {
-			const {path} = req.file;
-			res.json({path});
+      const {books} = store;
+      const {id} = req.params;
+      const index = books.findIndex(elemm => elemm.id === id);
+      if(index !== -1) {
+        const foundBook = books[index]
+        res.json(foundBook.fileBook)
+      }
 		}
-		res.json();
-		// const {books} = store;
-		// const {id} = req.params;
-		// const index = books.findIndex(elemm => elemm.id === id);
-		// if(index !== -1) {
-		// 	res.json(books[index])
-		// }
+
 	})
 	module.exports = router
