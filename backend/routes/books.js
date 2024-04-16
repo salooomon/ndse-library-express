@@ -1,67 +1,59 @@
 const express = require('express');
 const router = express.Router();
+const fileMulter = require('../middleware/file');
+const Book = require('../Book');
 
-const {v4: uuid} = require('uuid');
 const store = {
   books : [
     {
-      id: "1",
+      id: '1',
       title: "Мифы Ктулху",
       description: "string",
       authors: "Говард Филлипс Лавкрафт",
       favorite: true,
       fileCover: "string",
       fileName: "CthulhuMythos",
-      fileBook: "fileBook/CthulhuMythos"
+      fileBook: "someFileBook"
     }
   ]
 }
 
-class Book {
-  constructor(id = uuid(), title = '', description = '', authors = '', favorite = Boolean, fileCover = '', fileName = '',fileBook = '') {
-    this.id = id,
-    this.title = title,
-    this.description = description,
-    this.authors = authors,
-    this.favorite = favorite,
-    this.fileCover = fileCover,
-    this.fileName = fileName,
-    this.fileBook = fileBook
-  }
-}
-
-router.get('/api/books', (req, res) => {
+router.get('/', (req, res) => {
   const {books} = store;
   res.json(books);
 })
 
-router.get('/api/books/:id', (req, res) => {
+router.get('/:id', (req, res) => {
+  const {books} = store;
+  const {id} = req.params;
+  const index = books.findIndex((elem) => elem.id === id);
+  if (index !== -1) {
+    res.json(books[index]);
+  } else {
+
+    res.status(404);
+    res.json('404 | такой книги не найдено');
+  }
+})
+
+router.get('/:id/download', fileMulter.single('filebook'), (req, res) => {
   const {books} = store;
   const {id} = req.params;
   const index = books.findIndex(elem => elem.id === id);
   if (index !== -1) {
-    res.json(books[index]);
+    res.download(`${__dirname}/../public/books/${books[index]}.fileBook`, books[index].fileName, (err) => {
+      if(err) {
+        res.status(404);
+        res.json(err);
+      }
+    });
   } else {
     res.status(404);
     res.json('404 | такой книги не найдено');
   }
 })
 
-// router.get('/api/books/:id/download', (req, res) => {
-// 	const {books} = store;
-//   const {id} = req.params;
-// 	const index = books.findIndex(elemm => elemm.id === id);
-// 	if(index !== -1) {
-// 		res.json(books[index])
-// 	}
-// })
-
-router.post('/api/user/login', (req, res) => {
-  res.status(201);
-  res.json({ id: 1, mail: "test@mail.ru" });
-})
-
-router.post('/api/books', (req, res) => {
+router.post('/', fileMulter.single('filebook'), (req, res) => {
   const {books} = store;
   const bodyBook = req.body;
   const newBook = new Book(...bodyBook);
@@ -71,7 +63,7 @@ router.post('/api/books', (req, res) => {
   
 })
 
-router.put('/api/books/:id', (req, res) => {
+router.put('/:id', fileMulter.single('filebook'), (req, res) => {
   const {books} = store;
   const book = req.params
   const {id} = req.params;
@@ -86,7 +78,7 @@ router.put('/api/books/:id', (req, res) => {
   }
 })
 
-router.delete('/api/books/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   const {books} = store;
   const {id} = req.params;
   const index = books.findIndex(elem => elem.id === id);

@@ -5,8 +5,7 @@ const storage = multer.diskStorage({
 		cb(null, 'public/books')
 	},
 	filename(req, file, cb) {
-    console.log(file)
-		cb(null, `${Date.now}-${file.originalname}`)
+		cb(null, `${Date.now()}-${file.originalname}`)
 	}
 })
 module.exports = multer({storage});

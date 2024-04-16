@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
 
 	const data = `${now} ${method} ${url}`
 
-	fs.appendFile('someFileBook.log', data + os.EOL, (err) =>{
+	fs.appendFile('server.log', data + os.EOL, (err) =>{
 		if(err) throw err
 	})
 
